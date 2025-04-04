@@ -30,7 +30,7 @@ function Menu:new(ui)
             height = 50,
             hover = 0,
             action = function()
-              screenmanager:switch("game")
+              game.screenmanager:switch("game")
             end
         },
         {

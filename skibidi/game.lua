@@ -3,7 +3,7 @@ require("skibidi.components.ui")
 -- screen stuff
 require("skibidi.components.screenmanager")
 Menu = require("skibidi.components.screen.menuscreen")
-
+Game = require("skibidi.components.screen.gamescreen")
 game = {}
 
 function game:load()
@@ -22,6 +22,8 @@ function game:load()
 	self.ui = UI:new()
 
   self.screenmanager:add("menu", Menu:new(self.ui))
+  self.screenmanager:add("game", Game:new(self.ui))
+
   self.screenmanager:switch("menu")
 
   love.window.setTitle(self.title)
