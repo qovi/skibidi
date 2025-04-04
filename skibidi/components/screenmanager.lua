@@ -12,14 +12,15 @@ function screenmanager:new()
 end
 
 function screenmanager:add(name, state)
+  assert(type(name) == "string", "screen name must be a string")
+  assert(state, "screen state cannot be nil")
+  assert(type(state) == "table", "screen state must be a table")
+
   self.states[name] = state
-  print("Added state: " .. name)
 end
 
 function screenmanager:switch(name)
-  if not self or not self.states then
-    error("screenmanager or states table is nil")
-  end
+  assert(type(name) == "string", "screen name must be a string")
   assert(self.states[name], "unknown screen " .. name)
 
   if self.current and self.current.exit then
@@ -34,6 +35,8 @@ function screenmanager:switch(name)
 end
 
 function screenmanager:update(dt)
+  assert(type(dt) == "number", "dt must be a number")
+
   if self.current and self.current.update then
     self.current:update(dt)
   end
@@ -46,24 +49,36 @@ function screenmanager:draw()
 end
 
 function screenmanager:keypressed(key)
+  assert(key, "key cannot be nil")
+
   if self.current and self.current.keypressed then
     self.current:keypressed(key)
   end
 end
 
 function screenmanager:keyreleased(key)
+  assert(key, "key cannot be nil")
+
   if self.current and self.current.keyreleased then
     self.current:keyreleased(key)
   end
 end
 
 function screenmanager:mousepressed(worldX, worldY, button, screenX, screenY)
+  assert(type(worldX) == "number", "worldX must be a number")
+  assert(type(worldY) == "number", "worldY must be a number")
+  assert(button, "button cannot be nil")
+
   if self.current and self.current.mousepressed then
     self.current:mousepressed(worldX, worldY, button, screenX, screenY)
   end
 end
 
 function screenmanager:mousereleased(worldX, worldY, button, screenX, screenY)
+  assert(type(worldX) == "number", "worldX must be a number")
+  assert(type(worldY) == "number", "worldY must be a number")
+  assert(button, "button cannot be nil")
+
   if self.current and self.current.mousereleased then
     self.current:mousereleased(worldX, worldY, button, screenX, screenY)
   end

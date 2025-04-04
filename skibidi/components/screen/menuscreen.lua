@@ -5,6 +5,9 @@ local Menu = {}
 Menu.__index = Menu
 
 function Menu:new(ui)
+    assert(ui, "ui parameter cannot be nil")
+    assert(type(ui) == "table", "ui parameter must be a table")
+
     local state = {}
     setmetatable(state, self)
 
@@ -15,7 +18,16 @@ function Menu:new(ui)
         "assets/mathias.png",
         "assets/orizi.png"
     }
-    state.background = love.graphics.newImage(state.backgroundImages[state.backgroundIndex])
+
+    -- Validate that the image files exist
+    for i, path in ipairs(state.backgroundImages) do
+        local success = love.filesystem.getInfo(path) ~= nil
+        assert(success, "background image not found: " .. path)
+    end
+
+    local success, img = pcall(love.graphics.newImage, state.backgroundImages[state.backgroundIndex])
+    assert(success and img, "failed to load background image: " .. state.backgroundImages[state.backgroundIndex])
+    state.background = img
 
     state.hoverButton = nil
     state.hoverAlpha = 0
@@ -30,6 +42,8 @@ function Menu:new(ui)
             height = 50,
             hover = 0,
             action = function()
+              assert(game, "game object not initialized")
+              assert(game.screenmanager, "screen manager not initialized")
               game.screenmanager:switch("game")
             end
         },
@@ -41,10 +55,17 @@ function Menu:new(ui)
             height = 50,
             hover = 0,
             action = function()
-                state.backgroundIndex = state.backgroundIndex % #state.backgroundImages + 1
-                state.background = love.graphics.newImage(state.backgroundImages[state.backgroundIndex])
+                assert(state.backgroundImages, "background images not initialized")
+                assert(#state.backgroundImages > 0, "no background images available")
 
-                love.window.setIcon(love.image.newImageData(state.backgroundImages[state.backgroundIndex]))
+                state.backgroundIndex = state.backgroundIndex % #state.backgroundImages + 1
+                local success, img = pcall(love.graphics.newImage, state.backgroundImages[state.backgroundIndex])
+                assert(success and img, "failed to load background image: " .. state.backgroundImages[state.backgroundIndex])
+                state.background = img
+
+                local success, iconData = pcall(love.image.newImageData, state.backgroundImages[state.backgroundIndex])
+                assert(success and iconData, "failed to load icon image data")
+                love.window.setIcon(iconData)
             end
         }
     }
